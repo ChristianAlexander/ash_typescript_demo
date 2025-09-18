@@ -36,20 +36,23 @@ defmodule StockExplorer.Resources.Company do
     attribute :cik, :integer do
       description "An SEC Central Index Key identifier for the company"
       allow_nil? false
+      public? true
     end
 
     attribute :name, :string do
       description "The name of the company"
       allow_nil? false
+      public? true
     end
 
     attribute :ticker, :string do
       description "The ticker symbol for the company"
       allow_nil? false
+      public? true
     end
   end
 
   relationships do
-    belongs_to :exchange, StockExplorer.Resources.Exchange
+    belongs_to :exchange, StockExplorer.Resources.Exchange, public?: true
   end
 end

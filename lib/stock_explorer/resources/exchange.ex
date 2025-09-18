@@ -25,6 +25,7 @@ defmodule StockExplorer.Resources.Exchange do
     attribute :name, :string do
       description "The name of the exchange"
       allow_nil? false
+      public? true
     end
   end
 
