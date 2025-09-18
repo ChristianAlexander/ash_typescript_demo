@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -7,6 +7,7 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   listCompanies,
   type SuccessDataFunc,
@@ -120,28 +121,39 @@ export const CompaniesTable = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // Intersection Observer for infinite scrolling
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
+  // Ref for the scrollable container
+  const parentRef = useRef<HTMLDivElement>(null);
 
-    const sentinel = document.getElementById("load-more-sentinel");
-    if (sentinel) {
-      observer.observe(sentinel);
+  // Virtualizer setup
+  const virtualizer = useVirtualizer({
+    count: companies.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 60, // Estimated row height in pixels
+    overscan: 5,
+  });
+
+  // Intersection Observer for infinite scrolling with virtualization
+  useEffect(() => {
+    const [lastItem] = [...virtualizer.getVirtualItems()].reverse();
+
+    if (!lastItem) {
+      return;
     }
 
-    return () => {
-      if (sentinel) {
-        observer.unobserve(sentinel);
-      }
-    };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+    if (
+      lastItem.index >= companies.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    companies.length,
+    virtualizer.getVirtualItems(),
+  ]);
 
   // Loading state
   if (isLoading) {
@@ -217,34 +229,69 @@ export const CompaniesTable = () => {
           ))}
         </div>
 
-        {/* Scrollable Table Body */}
-        <div className="h-96 overflow-y-auto bg-white">
-          <div className="divide-y divide-gray-200">
-            {table.getRowModel().rows.map((row) => (
-              <div
-                key={row.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <div
-                    key={cell.id}
-                    className={`
-                      flex items-center
-                      ${cell.column.id === "ticker" ? "col-span-2" : ""}
-                      ${cell.column.id === "name" ? "col-span-5" : ""}
-                      ${cell.column.id === "exchange_name" ? "col-span-2" : ""}
-                      ${cell.column.id === "cik" ? "col-span-3" : ""}
-                    `}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                ))}
-              </div>
-            ))}
+        {/* Virtualized Scrollable Table Body */}
+        <div
+          ref={parentRef}
+          className="h-96 overflow-y-auto bg-white"
+          style={{ contain: "strict" }}
+        >
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => {
+              const row = table.getRowModel().rows[virtualItem.index];
+              if (!row) return null;
+
+              return (
+                <div
+                  key={virtualItem.key}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: `${virtualItem.size}px`,
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors duration-150 border-b border-gray-200"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <div
+                      key={cell.id}
+                      className={`
+                        flex items-center
+                        ${cell.column.id === "ticker" ? "col-span-2" : ""}
+                        ${cell.column.id === "name" ? "col-span-5" : ""}
+                        ${cell.column.id === "exchange_name" ? "col-span-2" : ""}
+                        ${cell.column.id === "cik" ? "col-span-3" : ""}
+                      `}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
 
             {/* Loading indicator for next page */}
             {isFetchingNextPage && (
-              <div className="grid grid-cols-12 gap-4 px-6 py-4">
+              <div
+                style={{
+                  position: "absolute",
+                  top: `${virtualizer.getTotalSize()}px`,
+                  left: 0,
+                  width: "100%",
+                  height: "60px",
+                }}
+                className="grid grid-cols-12 gap-4 px-6 py-4"
+              >
                 <div className="col-span-12 flex items-center justify-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                   <span className="ml-2 text-sm text-gray-600">
@@ -254,14 +301,18 @@ export const CompaniesTable = () => {
               </div>
             )}
 
-            {/* Sentinel for infinite scroll */}
-            {hasNextPage && !isFetchingNextPage && (
-              <div id="load-more-sentinel" className="h-1" />
-            )}
-
             {/* End of results message */}
             {!hasNextPage && companies.length > 0 && (
-              <div className="text-center py-8">
+              <div
+                style={{
+                  position: "absolute",
+                  top: `${virtualizer.getTotalSize()}px`,
+                  left: 0,
+                  width: "100%",
+                  height: "80px",
+                }}
+                className="text-center py-8"
+              >
                 <p className="text-gray-500 text-sm">
                   You've reached the end of the list
                 </p>
