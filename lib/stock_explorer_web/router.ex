@@ -22,6 +22,13 @@ defmodule StockExplorerWeb.Router do
     live "/companies-liveview", CompaniesLive
   end
 
+  scope "/rpc", StockExplorerWeb do
+    pipe_through :api
+
+    post "/run", RpcController, :run
+    post "/validate", RpcController, :validate
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", StockExplorerWeb do
   #   pipe_through :api

@@ -41,6 +41,7 @@ defmodule StockExplorer.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_typescript, "~> 0.2"},
       {:sourceror, "~> 1.8", only: [:dev, :test]},
       {:ash_sqlite, "~> 0.2"},
       {:ash_phoenix, "~> 2.0"},
@@ -88,7 +89,12 @@ defmodule StockExplorer.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind stock_explorer", "esbuild stock_explorer"],
+      "assets.build": [
+        "compile",
+        "ash_typescript.codegen --output \"assets/js/ash_rpc.ts\"",
+        "tailwind stock_explorer",
+        "esbuild stock_explorer"
+      ],
       "assets.deploy": [
         "tailwind stock_explorer --minify",
         "esbuild stock_explorer --minify",

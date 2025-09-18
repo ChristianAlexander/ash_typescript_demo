@@ -39,3 +39,6 @@ npm-debug.log
 *.db
 *.db-*
 
+# Ash Typescript RPC file
+/assets/js/ash_rpc.ts
+
