@@ -4,4 +4,8 @@ defmodule StockExplorerWeb.PageController do
   def home(conn, _params) do
     render(conn, :home)
   end
+
+  def react(conn, _params) do
+    render(conn, :react)
+  end
 end

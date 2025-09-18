@@ -18,6 +18,7 @@ defmodule StockExplorerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/react/*path", PageController, :react
     live "/companies-liveview", CompaniesLive
   end
 
