@@ -14,8 +14,13 @@ defmodule StockExplorer.Resources.Company do
 
   actions do
     read :read do
-      primary? true
-      pagination required?: true, keyset?: true, max_page_size: 50
+      prepare build(sort: :ticker)
+
+      pagination do
+        required? true
+        keyset? true
+        max_page_size 50
+      end
     end
 
     create :create do
