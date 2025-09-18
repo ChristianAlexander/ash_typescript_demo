@@ -1,5 +1,12 @@
 defmodule StockExplorer.Resources do
-  use Ash.Domain
+  use Ash.Domain,
+    extensions: [AshTypescript.Rpc]
+
+  typescript_rpc do
+    resource StockExplorer.Resources.Company do
+      rpc_action :list_companies, :read
+    end
+  end
 
   resources do
     resource StockExplorer.Resources.Company do
