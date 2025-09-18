@@ -44,7 +44,8 @@ config :spark,
 
 config :stock_explorer,
   ecto_repos: [StockExplorer.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  ash_domains: [StockExplorer.Resources]
 
 # Configures the endpoint
 config :stock_explorer, StockExplorerWeb.Endpoint,
