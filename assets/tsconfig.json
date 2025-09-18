@@ -28,7 +28,8 @@
     "allowJs": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["ES2019", "DOM"]
   },
   "include": ["js/**/*"]
 }
