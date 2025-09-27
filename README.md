@@ -2,6 +2,10 @@
 
 A demonstration of [ash_typescript](https://hexdocs.pm/ash_typescript/readme.html), a library that generates TypeScript RPC clients for Ash/Phoenix backends. This project showcases how to build rich frontend experiences without the complexities of traditional API design by leveraging Ash's resource definitions to automatically generate type-safe client code.
 
+Check out the related YouTube video for a walkthrough:
+
+[![Watch the video](https://img.youtube.com/vi/t-hori2Io14/maxresdefault.jpg)](https://youtu.be/t-hori2Io14)
+
 ## Features
 
 - **Type-safe RPC calls**: Automatically generated TypeScript client with full type safety
