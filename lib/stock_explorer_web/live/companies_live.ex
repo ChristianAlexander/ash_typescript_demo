@@ -82,12 +82,12 @@ defmodule StockExplorerWeb.CompaniesLive do
 
           <div
             id="companies-container"
-            phx-viewport-bottom={!@end_of_timeline? && "load-more"}
             class="h-96 overflow-y-auto bg-white"
           >
             <div
               id="companies"
               phx-update="stream"
+              phx-viewport-bottom={!@end_of_timeline? && "load-more"}
               class="divide-y divide-gray-200"
             >
               <div
