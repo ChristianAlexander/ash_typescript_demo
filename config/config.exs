@@ -42,6 +42,15 @@ config :spark,
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
 
+config :ash_typescript,
+  output_file: "assets/js/ash_rpc.ts",
+  input_field_formatter: :camel_case,
+  output_field_formatter: :camel_case,
+  generate_validation_functions: true,
+  generate_zod_schemas: false,
+  run_endpoint: "/rpc/run",
+  validate_endpoint: "/rpc/validate"
+
 config :stock_explorer,
   ecto_repos: [StockExplorer.Repo],
   generators: [timestamp_type: :utc_datetime],

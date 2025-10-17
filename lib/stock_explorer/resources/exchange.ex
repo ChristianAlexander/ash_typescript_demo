@@ -1,7 +1,12 @@
 defmodule StockExplorer.Resources.Exchange do
   use Ash.Resource,
     domain: StockExplorer.Resources,
-    data_layer: AshSqlite.DataLayer
+    data_layer: AshSqlite.DataLayer,
+    extensions: [AshTypescript.Resource]
+
+  typescript do
+    type_name "Exchange"
+  end
 
   sqlite do
     table "exchanges"

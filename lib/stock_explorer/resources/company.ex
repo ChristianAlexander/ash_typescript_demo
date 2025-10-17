@@ -1,7 +1,8 @@
 defmodule StockExplorer.Resources.Company do
   use Ash.Resource,
     domain: StockExplorer.Resources,
-    data_layer: AshSqlite.DataLayer
+    data_layer: AshSqlite.DataLayer,
+    extensions: [AshTypescript.Resource]
 
   sqlite do
     table "companies"
@@ -10,6 +11,10 @@ defmodule StockExplorer.Resources.Company do
     custom_indexes do
       index :ticker
     end
+  end
+
+  typescript do
+    type_name "Company"
   end
 
   actions do
