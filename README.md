@@ -36,7 +36,9 @@ defmodule StockExplorer.Resources do
   typescript_rpc do
     resource StockExplorer.Resources.Company do
       rpc_action :list_companies, :read
-    end
+      end
+
+    resource StockExplorer.Resources.Exchange
   end
 
   resources do
@@ -49,6 +51,22 @@ defmodule StockExplorer.Resources do
       define :list_exchanges, action: :read
     end
   end
+end
+```
+
+For security, `ash_typescript` also requires each exposed resource to use the `AshTypescript.Resource` extension, like this:
+
+```elixir
+defmodule StockExplorer.Resources.Company do
+  use Ash.Resource,
+    ...
+    extensions: [AshTypescript.Resource]
+
+  typescript do
+    type_name "Company"
+  end
+
+  ...
 end
 ```
 
