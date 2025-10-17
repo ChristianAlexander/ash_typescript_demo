@@ -19,7 +19,7 @@ To start your Phoenix server:
 
 * Install JavaScript dependencies: `npm i --prefix assets`
 * Run `mix setup` to install and setup dependencies
-* Generate the TypeScript RPC client: `mix ash_typescript.codegen --output "assets/js/ash_rpc.ts"`
+* Generate the TypeScript RPC client: `mix ash.codegen --dev`
 * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
@@ -62,7 +62,7 @@ end
 
 1. Define your Ash resources and actions
 2. Add RPC declarations to your domain module for actions you want to expose
-3. Run `mix ash_typescript.codegen --output "assets/js/ash_rpc.ts"` to generate the TypeScript client
+3. Run `mix ash.codegen --dev` to generate the TypeScript client
 4. Use the generated client in your frontend code with full type safety
 
 ## Learn More
