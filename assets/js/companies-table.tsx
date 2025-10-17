@@ -56,7 +56,8 @@ export const CompaniesTable = () => {
 
       if (!result.success) {
         throw new Error(
-          result.errors[0]?.message || "Failed to fetch companies",
+          (result as Extract<typeof result, { success: false }>).errors[0]
+            ?.message || "Failed to fetch companies",
         );
       }
 
