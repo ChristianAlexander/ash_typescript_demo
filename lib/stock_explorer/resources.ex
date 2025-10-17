@@ -6,6 +6,8 @@ defmodule StockExplorer.Resources do
     resource StockExplorer.Resources.Company do
       rpc_action :list_companies, :read
     end
+
+    resource StockExplorer.Resources.Exchange
   end
 
   resources do
